@@ -6,7 +6,6 @@ class CircleShape(pygame.sprite.Sprite):
     """TODO"""
 
     def __init__(self, x, y, radius):
-        # we will be using this later
         if hasattr(self, "containers"):
             super().__init__(self.containers)
         else:
@@ -16,10 +15,13 @@ class CircleShape(pygame.sprite.Sprite):
         self.velocity = pygame.Vector2(0, 0)
         self.radius = radius
 
-    def draw(self, screen: "pygame.Surface"):
+    def draw(self, screen: "pygame.Surface") -> None:
         """Sub-classes must override"""
         pass
 
-    def update(self, dt):
+    def update(self, dt: int) -> None:
         """Sub-classes must override"""
         pass
+
+    def is_colliding(self, obj: "CircleShape") -> bool:
+        return self.position.distance_to(obj.position) <= self.radius + obj.radius
