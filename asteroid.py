@@ -28,30 +28,30 @@ class Asteroid(CircleShape):
 
         if hasattr(self, "containers"):
             updateables, drawables, _ = self.containers
-            self.generate_debris(drawables, updateables)
+            self.generate_debris_effects(drawables, updateables)
+
         if self.health_points <= 0:
             self.kill()
             if self.radius <= ASTEROID_MIN_RADIUS:
                 return self.get_points_for_kill()
-            else:
-                v1 = self.velocity.rotate(random.uniform(20, 50))
-                v2 = self.velocity.rotate(random.uniform(-20, -50))
-                new_rad = self.radius - ASTEROID_MIN_RADIUS
-                smaller_asteroid_one = Asteroid(
-                    x=self.position.x, y=self.position.y, radius=new_rad
-                )
-                smaller_asteroid_one.velocity = v1 * 1.2
-                smaller_asteroid_two = Asteroid(
-                    x=self.position.x, y=self.position.y, radius=new_rad
-                )
-                smaller_asteroid_two.velocity = v2 * 1.2
-                return self.get_points_for_kill() - self.radius / 2
-        return 0
+
+            v1 = self.velocity.rotate(random.uniform(20, 50))
+            v2 = self.velocity.rotate(random.uniform(-20, -50))
+            new_rad = self.radius - ASTEROID_MIN_RADIUS
+            smaller_asteroid_one = Asteroid(
+                x=self.position.x, y=self.position.y, radius=new_rad
+            )
+            smaller_asteroid_one.velocity = v1 * 1.2
+            smaller_asteroid_two = Asteroid(
+                x=self.position.x, y=self.position.y, radius=new_rad
+            )
+            smaller_asteroid_two.velocity = v2 * 1.2
+            return self.get_points_for_kill() - self.radius / 2
 
     def get_points_for_kill(self) -> int:
         return self.radius * 1.5
 
-    def generate_debris(self, drawables, updateables) -> None:
+    def generate_debris_effects(self, drawables, updateables) -> None:
         num_particles = random.randint(2, 4)
         for _ in range(num_particles):
             angle = random.uniform(0, 360)
