@@ -21,12 +21,12 @@ class Asteroid(CircleShape):
     def update(self, dt: int) -> None:
         self.position += self.velocity * dt
 
-    def split(self, damage: float) -> None:
+    def split(self, damage: float) -> int:
         self.health_points -= damage
         if self.health_points <= 0:
             self.kill()
             if self.radius <= ASTEROID_MIN_RADIUS:
-                return
+                return self.get_points_for_kill()
             else:
                 v1 = self.velocity.rotate(random.uniform(20, 50))
                 v2 = self.velocity.rotate(random.uniform(-20, -50))
@@ -39,3 +39,8 @@ class Asteroid(CircleShape):
                     x=self.position.x, y=self.position.y, radius=new_rad
                 )
                 smaller_asteroid_two.velocity = v2 * 1.2
+                return self.get_points_for_kill() - self.radius / 2
+        return 0
+
+    def get_points_for_kill(self) -> int:
+        return self.radius * 1.5

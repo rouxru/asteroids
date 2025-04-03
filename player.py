@@ -18,6 +18,7 @@ class Player(CircleShape):
         super().__init__(x=x, y=y, radius=PLAYER_RADIUS)
         self.rotation = 0
         self.shot_timer = 0
+        self.score = 0
 
     def triangle(self) -> list:
         """TODO"""

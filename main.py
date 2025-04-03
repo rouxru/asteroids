@@ -40,10 +40,11 @@ def main():
         for asteroid in asteroids:
             if asteroid.is_colliding(obj=player):
                 print("Game over!")
+                print(f"Score: {player.score}")
                 return
             for shot in shots:
                 if asteroid.is_colliding(obj=shot):
-                    asteroid.split(damage=shot.damage)
+                    player.score += asteroid.split(damage=shot.damage)
                     shot.kill()
 
         for drawable in drawables:
