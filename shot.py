@@ -5,8 +5,9 @@ from constants import SHOT_RADIUS
 
 class Shot(CircleShape):
 
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: float, y: float, damage: float):
         super().__init__(x=x, y=y, radius=SHOT_RADIUS)
+        self.damage = damage
 
     def draw(self, screen: "pygame.Surface") -> None:
         """TODO"""

@@ -43,7 +43,7 @@ def main():
                 return
             for shot in shots:
                 if asteroid.is_colliding(obj=shot):
-                    asteroid.split()
+                    asteroid.split(damage=shot.damage)
                     shot.kill()
 
         for drawable in drawables:

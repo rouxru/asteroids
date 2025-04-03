@@ -5,6 +5,7 @@ from constants import (
     PLAYER_SHOOT_SPEED,
     PLAYER_SPEED,
     PLAYER_TURN_SPEED,
+    PRIMARY_WEOPON_DAMAGE,
 )
 import pygame
 from shot import Shot
@@ -65,6 +66,6 @@ class Player(CircleShape):
     def shoot(self) -> None:
         if self.shot_timer > 0:
             return
-        shot = Shot(self.position.x, self.position.y)
+        shot = Shot(self.position.x, self.position.y, damage=PRIMARY_WEOPON_DAMAGE)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
