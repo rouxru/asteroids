@@ -1,7 +1,9 @@
 from circleshape import CircleShape
 import pygame
+import pygame.math
 import random
 from constants import ASTEROID_MIN_RADIUS
+from debris import DebrisParticle
 
 
 class Asteroid(CircleShape):
@@ -23,6 +25,10 @@ class Asteroid(CircleShape):
 
     def split(self, damage: float) -> int:
         self.health_points -= damage
+
+        if hasattr(self, "containers"):
+            updateables, drawables, _ = self.containers
+            self.generate_debris(drawables, updateables)
         if self.health_points <= 0:
             self.kill()
             if self.radius <= ASTEROID_MIN_RADIUS:
@@ -44,3 +50,17 @@ class Asteroid(CircleShape):
 
     def get_points_for_kill(self) -> int:
         return self.radius * 1.5
+
+    def generate_debris(self, drawables, updateables) -> None:
+        num_particles = random.randint(2, 4)
+        for _ in range(num_particles):
+            angle = random.uniform(0, 360)
+            speed = random.uniform(50, 150)
+            vel = (
+                self.velocity.rotate(angle) + pygame.Vector2(1, 0).rotate(angle) * speed
+            )
+            particle = DebrisParticle(
+                position=self.position, velocity=vel, radius=self.radius * 0.2
+            )
+            updateables.add(particle)
+            drawables.add(particle)

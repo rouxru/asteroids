@@ -5,6 +5,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from explosion import Explosion
 
 
 def main():
@@ -47,6 +48,12 @@ def main():
             for shot in shots:
                 if asteroid.is_colliding(obj=shot):
                     player.score += asteroid.split(damage=shot.damage)
+                    if not asteroid.alive():
+                        explosion = Explosion(
+                            position=asteroid.position, radius=asteroid.radius
+                        )
+                        updateables.add(explosion)
+                        drawables.add(explosion)
                     shot.kill()
 
         for drawable in drawables:
