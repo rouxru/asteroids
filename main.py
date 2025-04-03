@@ -39,9 +39,11 @@ def main():
 
         for asteroid in asteroids:
             if asteroid.is_colliding(obj=player):
-                print("Game over!")
-                print(f"Score: {player.score}")
-                return
+                player.respawn(asteroid=asteroid)
+                if not player.alive():
+                    print("Game over!")
+                    print(f"Score: {player.score}")
+                    return
             for shot in shots:
                 if asteroid.is_colliding(obj=shot):
                     player.score += asteroid.split(damage=shot.damage)

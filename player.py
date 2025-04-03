@@ -1,5 +1,6 @@
 from circleshape import CircleShape
 from constants import (
+    PLAYER_LIVES,
     PLAYER_RADIUS,
     PLAYER_SHOOT_COOLDOWN,
     PLAYER_SHOOT_SPEED,
@@ -9,6 +10,7 @@ from constants import (
 )
 import pygame
 from shot import Shot
+from asteroid import Asteroid
 
 
 class Player(CircleShape):
@@ -16,6 +18,7 @@ class Player(CircleShape):
 
     def __init__(self, x: float, y: float):
         super().__init__(x=x, y=y, radius=PLAYER_RADIUS)
+        self.lives = PLAYER_LIVES
         self.rotation = 0
         self.shot_timer = 0
         self.score = 0
@@ -65,8 +68,19 @@ class Player(CircleShape):
         self.position += forward * PLAYER_SPEED * dt
 
     def shoot(self) -> None:
+        """TODO"""
         if self.shot_timer > 0:
             return
         shot = Shot(self.position.x, self.position.y, damage=PRIMARY_WEOPON_DAMAGE)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
+
+    def respawn(self, asteroid: "Asteroid") -> None:
+        """TODO"""
+        if self.lives - 1 == 0:
+            self.kill()
+            return
+
+        self.lives -= 1
+        asteroid.kill()
+        self.score -= asteroid.get_points_for_kill() / 2
