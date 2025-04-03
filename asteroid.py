@@ -34,19 +34,20 @@ class Asteroid(CircleShape):
             self.kill()
             if self.radius <= ASTEROID_MIN_RADIUS:
                 return self.get_points_for_kill()
-
-            v1 = self.velocity.rotate(random.uniform(20, 50))
-            v2 = self.velocity.rotate(random.uniform(-20, -50))
-            new_rad = self.radius - ASTEROID_MIN_RADIUS
-            smaller_asteroid_one = Asteroid(
-                x=self.position.x, y=self.position.y, radius=new_rad
-            )
-            smaller_asteroid_one.velocity = v1 * 1.2
-            smaller_asteroid_two = Asteroid(
-                x=self.position.x, y=self.position.y, radius=new_rad
-            )
-            smaller_asteroid_two.velocity = v2 * 1.2
-            return self.get_points_for_kill() - self.radius / 2
+            else:
+                v1 = self.velocity.rotate(random.uniform(20, 50))
+                v2 = self.velocity.rotate(random.uniform(-20, -50))
+                new_rad = self.radius - ASTEROID_MIN_RADIUS
+                smaller_asteroid_one = Asteroid(
+                    x=self.position.x, y=self.position.y, radius=new_rad
+                )
+                smaller_asteroid_one.velocity = v1 * 1.2
+                smaller_asteroid_two = Asteroid(
+                    x=self.position.x, y=self.position.y, radius=new_rad
+                )
+                smaller_asteroid_two.velocity = v2 * 1.2
+                return self.get_points_for_kill() - self.radius / 2
+        return 0
 
     def get_points_for_kill(self) -> int:
         return self.radius * 1.5
