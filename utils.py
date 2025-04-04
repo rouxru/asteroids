@@ -1,5 +1,4 @@
-from constants import SCREEN_WIDTH
-from constants import SCREEN_HEIGHT
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 def init_text():
