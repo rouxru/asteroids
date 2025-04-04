@@ -63,19 +63,22 @@ class Player(CircleShape):
         if keys[pygame.K_SPACE]:
             self.shoot()
 
-        margin = self.radius
-        if (
-            self.position.x < -margin  # type: ignore
-            or self.position.x > SCREEN_WIDTH + margin  # type: ignore
-            or self.position.y < -margin  # type: ignore
-            or self.position.y > SCREEN_HEIGHT + margin  # type: ignore
-        ):
-            self.kill()
-
     def move(self, dt: int) -> None:
         """Moves player."""
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt
+        next_x, next_y = self.position + forward * PLAYER_SPEED * dt
+
+        if next_x < 0:
+            next_x = SCREEN_WIDTH
+        elif next_x > SCREEN_WIDTH:
+            next_x -= SCREEN_WIDTH
+
+        if next_y < 0:
+            next_y = SCREEN_HEIGHT
+        elif next_y > SCREEN_HEIGHT:
+            next_y -= SCREEN_HEIGHT
+
+        self.position = pygame.Vector2(next_x, next_y)
 
     def shoot(self) -> None:
         """Shoots gun."""
