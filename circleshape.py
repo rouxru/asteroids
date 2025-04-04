@@ -1,13 +1,12 @@
 import pygame
 
 
-# Base class for game objects
 class CircleShape(pygame.sprite.Sprite):
-    """TODO"""
+    """Base class for game objects."""
 
     def __init__(self, x, y, radius):
         if hasattr(self, "containers"):
-            super().__init__(self.containers)
+            super().__init__(self.containers)  # type: ignore
         else:
             super().__init__()
 
@@ -24,4 +23,5 @@ class CircleShape(pygame.sprite.Sprite):
         pass
 
     def is_colliding(self, obj: "CircleShape") -> bool:
+        """Is this object colliding with another."""
         return self.position.distance_to(obj.position) <= self.radius + obj.radius

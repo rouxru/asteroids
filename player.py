@@ -63,11 +63,12 @@ class Player(CircleShape):
         if keys[pygame.K_SPACE]:
             self.shoot()
 
+        margin = self.radius
         if (
-            self.position.x < 0
-            or self.position.x > SCREEN_WIDTH
-            or self.position.y < 0
-            or self.position.y > SCREEN_HEIGHT
+            self.position.x < -margin  # type: ignore
+            or self.position.x > SCREEN_WIDTH + margin  # type: ignore
+            or self.position.y < -margin  # type: ignore
+            or self.position.y > SCREEN_HEIGHT + margin  # type: ignore
         ):
             self.kill()
 
@@ -80,7 +81,7 @@ class Player(CircleShape):
         """Shoots gun."""
         if self.shot_timer > 0:
             return
-        shot = Shot(self.position.x, self.position.y, damage=PRIMARY_WEOPON_DAMAGE)
+        shot = Shot(self.position.x, self.position.y, damage=PRIMARY_WEOPON_DAMAGE)  # type: ignore
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
 

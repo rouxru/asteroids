@@ -38,7 +38,7 @@ def main():
         screen.fill("black")
         updateables.update(dt=dt)
 
-        for asteroid in asteroids:
+        for i, asteroid in enumerate(asteroids):
             if asteroid.is_colliding(obj=player):
                 points = asteroid.resolve_collision(obj=player) or 0
                 explosion = Explosion(
@@ -47,6 +47,10 @@ def main():
                 updateables.add(explosion)
                 drawables.add(explosion)
                 player.respawn(points_lost=points)
+            for j in range(i + 1, len(asteroids)):
+                other = asteroids.sprites()[j]  # type: ignore
+                if asteroid.is_colliding(other):
+                    asteroid.resolve_collision(other)
 
             for shot in shots:
                 if asteroid.is_colliding(obj=shot):
@@ -59,10 +63,6 @@ def main():
                         drawables.add(explosion)
                     shot.kill()
 
-            for other in asteroids:
-                if asteroid != other and asteroid.is_colliding(other):
-                    asteroid.resolve_collision(other)
-
         if not player.alive():
             print("Game over!")
             return
@@ -70,8 +70,9 @@ def main():
         for drawable in drawables:
             drawable.draw(screen=screen)
 
+        pygame.display.set_caption(f"FPS: {clock.get_fps():.1f}")
         pygame.display.flip()
-        dt = clock.tick() / 1000
+        dt = clock.tick(60) / 1000
 
 
 if __name__ == "__main__":
