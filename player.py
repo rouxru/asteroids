@@ -10,11 +10,10 @@ from constants import (
 )
 import pygame
 from shot import Shot
-from asteroid import Asteroid
 
 
 class Player(CircleShape):
-    """TODO"""
+    """Player class."""
 
     def __init__(self, x: float, y: float):
         super().__init__(x=x, y=y, radius=PLAYER_RADIUS)
@@ -24,7 +23,7 @@ class Player(CircleShape):
         self.score = 0
 
     def triangle(self) -> list:
-        """TODO"""
+        """Generates players drawn shape."""
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
         a = self.position + forward * self.radius
@@ -33,17 +32,17 @@ class Player(CircleShape):
         return [a, b, c]
 
     def draw(self, screen: "pygame.Surface"):
-        """TODO"""
+        """Draws player."""
         pygame.draw.polygon(
             surface=screen, color="white", points=self.triangle(), width=2
         )
 
     def rotate(self, dt: int) -> None:
-        """TODO"""
+        """Rotates player."""
         self.rotation += PLAYER_TURN_SPEED * dt
 
     def update(self, dt: int) -> None:
-        """TODO"""
+        """Called every frame to track keypresses for actions."""
         self.shot_timer -= dt
         keys = pygame.key.get_pressed()
 
@@ -63,12 +62,12 @@ class Player(CircleShape):
             self.shoot()
 
     def move(self, dt: int) -> None:
-        """TODO"""
+        """Moves player."""
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
 
     def shoot(self) -> None:
-        """TODO"""
+        """Shoots gun."""
         if self.shot_timer > 0:
             return
         shot = Shot(self.position.x, self.position.y, damage=PRIMARY_WEOPON_DAMAGE)
@@ -76,10 +75,9 @@ class Player(CircleShape):
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
 
     def respawn(self, points_lost: float) -> None:
-        """TODO"""
-        if self.lives - 1 == 0:
-            self.kill()
-            return
-
+        """Respawns player and takes away points based on asteroid."""
         self.lives -= 1
+        if not self.lives:
+            return self.kill()
+
         self.score -= points_lost
