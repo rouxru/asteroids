@@ -81,3 +81,8 @@ class Player(CircleShape):
             return self.kill()
 
         self.score -= points_lost
+
+    def kill(self):
+        """Print current player score and kill."""
+        print(f"Score: {self.score}")
+        return super().kill()

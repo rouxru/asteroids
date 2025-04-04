@@ -40,7 +40,7 @@ def main():
 
         for asteroid in asteroids:
             if asteroid.is_colliding(obj=player):
-                points = asteroid.resolve_collision(obj=player)
+                points = asteroid.resolve_collision(obj=player) or 0
                 explosion = Explosion(
                     position=asteroid.position, radius=asteroid.radius
                 )
@@ -49,7 +49,6 @@ def main():
                 player.respawn(points_lost=points)
                 if not player.alive():
                     print("Game over!")
-                    print(f"Score: {player.score}")
                     return
 
             for shot in shots:
