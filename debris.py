@@ -13,6 +13,18 @@ class DebrisParticle(pygame.sprite.Sprite):
         self.duration = duration
         self.elapsed = 0
 
+        progress = self.elapsed / self.duration
+        alpha = max(255 * (1 - progress), 0)
+        self.surface = pygame.Surface(
+            (self.radius * 2, self.radius * 2), pygame.SRCALPHA
+        )
+        pygame.draw.circle(
+            self.surface,
+            (200, 200, 200, int(alpha)),
+            (self.radius, self.radius),
+            int(self.radius),
+        )
+
     def update(self, dt: float):
         self.elapsed += dt
         self.position += self.velocity * dt
@@ -20,14 +32,4 @@ class DebrisParticle(pygame.sprite.Sprite):
             self.kill()
 
     def draw(self, screen: pygame.Surface):
-        progress = self.elapsed / self.duration
-        alpha = max(255 * (1 - progress), 0)
-
-        surface = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
-        pygame.draw.circle(
-            surface,
-            (200, 200, 200, int(alpha)),
-            (self.radius, self.radius),
-            int(self.radius),
-        )
-        screen.blit(surface, self.position - Vector2(self.radius, self.radius))
+        screen.blit(self.surface, self.position - Vector2(self.radius, self.radius))
