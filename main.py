@@ -47,9 +47,6 @@ def main():
                 updateables.add(explosion)
                 drawables.add(explosion)
                 player.respawn(points_lost=points)
-                if not player.alive():
-                    print("Game over!")
-                    return
 
             for shot in shots:
                 if asteroid.is_colliding(obj=shot):
@@ -65,6 +62,10 @@ def main():
             for other in asteroids:
                 if asteroid != other and asteroid.is_colliding(other):
                     asteroid.resolve_collision(other)
+
+        if not player.alive():
+            print("Game over!")
+            return
 
         for drawable in drawables:
             drawable.draw(screen=screen)

@@ -7,6 +7,8 @@ from constants import (
     PLAYER_SPEED,
     PLAYER_TURN_SPEED,
     PRIMARY_WEOPON_DAMAGE,
+    SCREEN_HEIGHT,
+    SCREEN_WIDTH,
 )
 import pygame
 from shot import Shot
@@ -60,6 +62,14 @@ class Player(CircleShape):
 
         if keys[pygame.K_SPACE]:
             self.shoot()
+
+        if (
+            self.position.x < 0
+            or self.position.x > SCREEN_WIDTH
+            or self.position.y < 0
+            or self.position.y > SCREEN_HEIGHT
+        ):
+            self.kill()
 
     def move(self, dt: int) -> None:
         """Moves player."""
