@@ -1,6 +1,6 @@
+from typing import Optional
 from circleshape import CircleShape
 import pygame
-import pygame.math
 import random
 from constants import ASTEROID_MIN_RADIUS
 from debris import DebrisParticle
@@ -109,3 +109,33 @@ class Asteroid(CircleShape):
             )
             updateables.add(particle)
             drawables.add(particle)
+
+    def resolve_collision(self, obj) -> Optional[float]:
+        from player import Player
+
+        if isinstance(obj, Player):
+            if self.alive() and obj.alive():
+                points = self.get_points_for_kill() / 2
+                self.kill()
+                return points
+
+        elif isinstance(obj, Asteroid) and obj != self:
+            if self.alive() and obj.alive():
+                delta = self.position - obj.position
+                distance = delta.length()
+                normal = delta.normalize()
+
+                rel_vel = self.velocity - obj.velocity
+                vel_along_normal = rel_vel.dot(normal)
+
+                if vel_along_normal > 0:
+                    return
+
+                self.velocity -= normal * vel_along_normal
+                obj.velocity += normal * vel_along_normal
+
+                overlap = (self.radius + obj.radius) - distance
+                if overlap > 0:
+                    correction = normal * (overlap / 2)
+                    self.position += correction
+                    obj.position -= correction

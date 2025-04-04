@@ -75,12 +75,11 @@ class Player(CircleShape):
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
 
-    def respawn(self, asteroid: "Asteroid") -> None:
+    def respawn(self, points_lost: float) -> None:
         """TODO"""
         if self.lives - 1 == 0:
             self.kill()
             return
 
         self.lives -= 1
-        asteroid.kill()
-        self.score -= asteroid.get_points_for_kill() / 2
+        self.score -= points_lost
