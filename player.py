@@ -1,3 +1,5 @@
+import pygame
+
 from circleshape import CircleShape
 from constants import (
     PLAYER_LIVES,
@@ -10,7 +12,6 @@ from constants import (
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
 )
-import pygame
 from shot import Shot
 
 
@@ -42,6 +43,11 @@ class Player(CircleShape):
     def rotate(self, dt: int) -> None:
         """Rotates player."""
         self.rotation += PLAYER_TURN_SPEED * dt
+
+        if self.rotation < 0:
+            self.rotation += 360
+        elif self.rotation > 360:
+            self.rotation -= 360
 
     def update(self, dt: int) -> None:
         """Called every frame to track keypresses for actions."""
@@ -94,9 +100,8 @@ class Player(CircleShape):
         if not self.lives:
             return self.kill()
 
-        self.score -= points_lost
+        self.score = max(0, self.score - points_lost)
 
     def kill(self):
         """Print current player score and kill."""
-        print(f"Score: {self.score}")
         return super().kill()
