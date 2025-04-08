@@ -1,79 +1,98 @@
+import itertools
+
 import pygame
-from constants import *
-from utils import init_text
-from player import Player
+
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
-from shot import Shot
+from constants import *
 from explosion import Explosion
+from player import Player
+from shot import Shot
+from utils import init_text
 
 
-def main():
-    init_text()
-    pygame.init()
+class Game:
+    def __init__(self):
+        pygame.init()
 
-    clock = pygame.time.Clock()
-    dt = 0
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        # Groups:
+        self.updateables = pygame.sprite.Group()
+        self.drawables = pygame.sprite.Group()
+        self.asteroids = pygame.sprite.Group()
+        self.shots = pygame.sprite.Group()
 
-    # Groups:
-    updateables = pygame.sprite.Group()
-    drawables = pygame.sprite.Group()
-    asteroids: list["Asteroid"] = pygame.sprite.Group()  # type: ignore
-    shots: list["Shot"] = pygame.sprite.Group()  # type: ignore
+        Player.containers = (self.updateables, self.drawables)
+        AsteroidField.containers = (self.updateables,)
+        Asteroid.containers = (self.updateables, self.drawables, self.asteroids)
+        Shot.containers = (self.updateables, self.drawables, self.shots)
 
-    Player.containers = (updateables, drawables)  # type: ignore
-    Asteroid.containers = (updateables, drawables, asteroids)  # type: ignore
-    AsteroidField.containers = (updateables,)  # type: ignore
-    Shot.containers = (updateables, drawables, shots)  # type: ignore
+        self.player = Player(x=SCREEN_WIDTH / 2, y=SCREEN_HEIGHT / 2)
+        AsteroidField()
 
-    player = Player(x=SCREEN_WIDTH / 2, y=SCREEN_HEIGHT / 2)
-    asteroid_field = AsteroidField()
+    def start(self):
+        """Starts the game."""
+        init_text()
 
-    # Game loop:
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        dt, clock = 0, pygame.time.Clock()
+        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+        # Game loop:
+        while True:
+            if any(event.type == pygame.QUIT for event in pygame.event.get()):
                 return
-        screen.fill("black")
-        updateables.update(dt=dt)
+            if not self.player.alive():
+                print("Game over!")
+                print(self.player.score)
+                return
 
-        for i, asteroid in enumerate(asteroids):
-            if asteroid.is_colliding(obj=player):
-                points = asteroid.resolve_collision(obj=player) or 0
-                explosion = Explosion(
-                    position=asteroid.position, radius=asteroid.radius
-                )
-                updateables.add(explosion)
-                drawables.add(explosion)
-                player.respawn(points_lost=points)
-            for j in range(i + 1, len(asteroids)):
-                other = asteroids.sprites()[j]  # type: ignore
+            screen.fill("black")
+            self._update_sprites(dt=dt, visual_effects=True)
+            for drawable in self.drawables:
+                drawable.draw(screen=screen)
+
+            pygame.display.set_caption(f"FPS: {clock.get_fps():.1f}")
+            pygame.display.flip()
+            dt = clock.tick(60) / 1000
+
+    def sim(self, dt: float = 0.05):
+        """Starts a simulation of the game - headless and sped up."""
+        # Game loop:
+        for i in itertools.count():
+            if not self.player.alive() or any(
+                event == pygame.QUIT for event in pygame.event.get()
+            ):
+                return i, self.player.score
+
+            self._update_sprites(dt=dt)
+
+    def _update_sprites(self, dt: float, visual_effects: bool = True):
+        self.updateables.update(dt=dt)
+
+        for i, asteroid in enumerate(self.asteroids):
+            if asteroid.is_colliding(obj=self.player):
+                points = asteroid.resolve_collision(obj=self.player) or 0
+                if visual_effects:
+                    explosion = Explosion(
+                        position=asteroid.position, radius=asteroid.radius
+                    )
+                    self.updateables.add(explosion)
+                    self.drawables.add(explosion)
+                self.player.respawn(points_lost=points)
+            for j in range(i + 1, len(self.asteroids)):
+                other = self.asteroids.sprites()[j]
                 if asteroid.is_colliding(other):
                     asteroid.resolve_collision(other)
-
-            for shot in shots:
+            for shot in self.shots:
                 if asteroid.is_colliding(obj=shot):
-                    player.score += asteroid.split(damage=shot.damage)
-                    if not asteroid.alive():
+                    self.player.score += asteroid.split(damage=shot.damage)
+                    if not asteroid.alive() and visual_effects:
                         explosion = Explosion(
                             position=asteroid.position, radius=asteroid.radius
                         )
-                        updateables.add(explosion)
-                        drawables.add(explosion)
+                        self.updateables.add(explosion)
+                        self.drawables.add(explosion)
                     shot.kill()
-
-        if not player.alive():
-            print("Game over!")
-            return
-
-        for drawable in drawables:
-            drawable.draw(screen=screen)
-
-        pygame.display.set_caption(f"FPS: {clock.get_fps():.1f}")
-        pygame.display.flip()
-        dt = clock.tick(60) / 1000
 
 
 if __name__ == "__main__":
-    main()
+    Game().start()
