@@ -1,6 +1,7 @@
-from circleshape import CircleShape
 import pygame
-from constants import SHOT_RADIUS
+
+from circleshape import CircleShape
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH, SHOT_RADIUS
 
 
 class Shot(CircleShape):
@@ -22,3 +23,11 @@ class Shot(CircleShape):
     def update(self, dt: int) -> None:
         """TODO"""
         self.position += self.velocity * dt
+
+        if (
+            self.position.x < 0
+            or self.position.x > SCREEN_WIDTH
+            or self.position.y < 0
+            or self.position.y > SCREEN_HEIGHT
+        ):
+            self.kill()
