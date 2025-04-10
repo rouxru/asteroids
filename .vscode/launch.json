@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Play Asteroids",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "main",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "VIRTUAL_ENV": "${workspaceFolder}/venv"
+            },
+            "python": "${workspaceFolder}/venv/bin/python"  // Linux/macOS
+            // "python": "${workspaceFolder}\\venv\\Scripts\\python.exe"  // Windows
+        },
+    ]
+}
