@@ -14,5 +14,18 @@
             "python": "${workspaceFolder}/venv/bin/python"  // Linux/macOS
             // "python": "${workspaceFolder}\\venv\\Scripts\\python.exe"  // Windows
         },
+        {
+            "name": "Train AI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "ai.genetic_gym",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "VIRTUAL_ENV": "${workspaceFolder}/venv"
+            },
+            "python": "${workspaceFolder}/venv/bin/python"  // Linux/macOS
+            // "python": "${workspaceFolder}\\venv\\Scripts\\python.exe"  // Windows
+        },
     ]
 }
