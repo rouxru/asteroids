@@ -9,7 +9,7 @@ from constants import *
 from explosion import Explosion
 from player import Player
 from shot import Shot
-from utils import init_text
+from utils import init_text, is_colliding
 
 if TYPE_CHECKING:
     from ai.nn import NeuralNetwork
@@ -109,7 +109,7 @@ class Game:
         self.updateables.update(dt=dt)
 
         for i, asteroid in enumerate(self.asteroids):
-            if asteroid.is_colliding(obj=self.player):
+            if is_colliding(asteroid, self.player):
                 points = asteroid.resolve_collision(obj=self.player) or 0
                 if visual_effects:
                     explosion = Explosion(
@@ -120,10 +120,10 @@ class Game:
                 self.player.respawn(points_lost=points)
             for j in range(i + 1, len(self.asteroids)):
                 other = self.asteroids.sprites()[j]
-                if asteroid.is_colliding(other):
+                if is_colliding(asteroid, other):
                     asteroid.resolve_collision(other)
             for shot in self.shots:
-                if asteroid.is_colliding(obj=shot):
+                if is_colliding(asteroid, shot):
                     self.player.score += asteroid.split(damage=shot.damage)
                     if not asteroid.alive() and visual_effects:
                         explosion = Explosion(
