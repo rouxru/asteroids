@@ -46,7 +46,8 @@ class Game:
                 return
             if not self.player.alive():
                 print("Game over!")
-                print(self.player.score)
+                print(f"Score: {self.player.score}")
+                print(f"Accuracy: {self.player.accuracy:.1f}%")
                 return
 
             if ship_ai:
@@ -124,6 +125,7 @@ class Game:
                     asteroid.resolve_collision(other)
             for shot in self.shots:
                 if is_colliding(asteroid, shot):
+                    self.player.shots_hit += 1
                     self.player.score += asteroid.split(damage=shot.damage)
                     if not asteroid.alive() and visual_effects:
                         explosion = Explosion(

@@ -24,6 +24,9 @@ class Player(CircleShape):
         self.rotation = 0
         self.shot_timer = 0
         self.score = 0
+        self.shots_hit = 0
+        self.shots_fired = 0
+        self.accuracy = 0
 
     def triangle(self) -> list:
         """Generates players drawn shape."""
@@ -67,7 +70,9 @@ class Player(CircleShape):
             self.move(dt=dt * -1)
 
         if keys[pygame.K_SPACE]:
-            self.shoot()
+            if self.shoot():
+                self.shots_fired += 1
+                self.update_accuracy()
 
     def move(self, dt: float) -> None:
         """Moves player."""
@@ -86,13 +91,14 @@ class Player(CircleShape):
 
         self.position = pygame.Vector2(next_x, next_y)
 
-    def shoot(self) -> None:
+    def shoot(self) -> bool:
         """Shoots gun."""
         if self.shot_timer > 0:
-            return
+            return False
         shot = Shot(self.position.x, self.position.y, damage=PRIMARY_WEOPON_DAMAGE)  # type: ignore
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
+        return True
 
     def respawn(self, points_lost: float) -> None:
         """Respawns player and takes away points based on asteroid."""
@@ -105,3 +111,10 @@ class Player(CircleShape):
     def kill(self):
         """Print current player score and kill."""
         return super().kill()
+
+    def update_accuracy(self):
+        """Updates the players accuracy."""
+        if self.shots_fired == 0:
+            self.accuracy = 0
+        else:
+            self.accuracy = (self.shots_hit / self.shots_fired) * 100
