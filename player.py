@@ -40,7 +40,7 @@ class Player(CircleShape):
             surface=screen, color="white", points=self.triangle(), width=2
         )
 
-    def rotate(self, dt: int) -> None:
+    def rotate(self, dt: float) -> None:
         """Rotates player."""
         self.rotation += PLAYER_TURN_SPEED * dt
 
@@ -49,7 +49,7 @@ class Player(CircleShape):
         elif self.rotation > 360:
             self.rotation -= 360
 
-    def update(self, dt: int) -> None:
+    def update(self, dt: float) -> None:
         """Called every frame to track keypresses for actions."""
         self.shot_timer -= dt
         keys = pygame.key.get_pressed()
@@ -69,7 +69,7 @@ class Player(CircleShape):
         if keys[pygame.K_SPACE]:
             self.shoot()
 
-    def move(self, dt: int) -> None:
+    def move(self, dt: float) -> None:
         """Moves player."""
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         next_x, next_y = self.position + forward * PLAYER_SPEED * dt

@@ -1,13 +1,20 @@
 """A simple neural network implementation."""
 
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional, Union
 
 import numpy as np
+
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 if TYPE_CHECKING:
     import numpy.typing as npt
 
+    from game_state import GameState
+
     NDArray = npt.NDArray[np.float64]
+
+
+SCREEN_DIAGONAL = np.sqrt(SCREEN_HEIGHT**2 + SCREEN_WIDTH**2)
 
 
 def relu(x: "NDArray") -> "NDArray":
@@ -37,10 +44,12 @@ class DenseLayer:
         weights: Optional["NDArray"] = None,
         biases: Optional["NDArray"] = None,
     ):
-        self.weights = weights or np.random.randn(input_dim, output_dim) * he_scale(
-            input_dim
+        self.weights = (
+            weights
+            if weights is not None
+            else np.random.randn(input_dim, output_dim) * he_scale(input_dim)
         )
-        self.biases = biases or np.zeros(output_dim)
+        self.biases = biases if biases is not None else np.zeros(output_dim)
         self.activation = activation
 
     def forward(self, inputs: "NDArray"):
@@ -52,8 +61,26 @@ class NeuralNetwork:
     def __init__(self, *layers: "DenseLayer"):
         self.layers = layers
 
-    def predict(self, inputs: "NDArray"):
+    def predict(self, inputs: Union["NDArray", "GameState"]):
+        """Calculate NN output."""
+        # parse game state to inputs for the NN
+        if not isinstance(inputs, np.ndarray):
+            inputs = self.get_inputs(inputs)
+
         for layer in self.layers:
             inputs = layer.forward(inputs)
 
-        return inputs[0]
+        return np.argmax(inputs)
+
+    @staticmethod
+    def get_inputs(game_state: "GameState") -> "NDArray":
+        """Gets the NN inputs from game state."""
+        inputs = []
+
+        inputs.append((game_state.ship_angle - 180) / 180)
+        inputs.append(game_state.asteroid_dist / SCREEN_DIAGONAL)
+        inputs.append((game_state.asteroid_angle - 180) / 180)
+        inputs.append(game_state.asteroid_relative_velocity.x / SCREEN_WIDTH)
+        inputs.append(game_state.asteroid_relative_velocity.y / SCREEN_HEIGHT)
+
+        return np.array(inputs)
