@@ -70,9 +70,7 @@ class Player(CircleShape):
             self.move(dt=dt * -1)
 
         if keys[pygame.K_SPACE]:
-            if self.shoot():
-                self.shots_fired += 1
-                self.update_accuracy()
+            self.shoot()
 
     def move(self, dt: float) -> None:
         """Moves player."""
@@ -98,6 +96,8 @@ class Player(CircleShape):
         shot = Shot(self.position.x, self.position.y, damage=PRIMARY_WEOPON_DAMAGE)  # type: ignore
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
+        self.shots_fired += 1
+        self.update_accuracy()
         return True
 
     def respawn(self, points_lost: float) -> None:
